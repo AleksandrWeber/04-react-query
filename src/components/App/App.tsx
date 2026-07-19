@@ -51,6 +51,8 @@ const App = () => {
     setSelectedMovie(null)
   }
 
+  const movies = data?.results ?? []
+
   useEffect(() => {
     if (!searchQuery.trim()) {
       return
@@ -65,8 +67,6 @@ const App = () => {
       toast.error('No movies found for your request.')
     }
   }, [isError, isSuccess, movies.length, searchQuery])
-
-  const movies = data?.results ?? []
   const totalPages = data?.total_pages ?? 0
   const shouldShowPagination = totalPages > 1
 
