@@ -27,15 +27,13 @@ const App = () => {
     data,
     isLoading,
     isError,
-  } = useQuery(
-    ['movies', searchQuery, page],
-    () => fetchMovies(searchQuery, page),
-    {
-      enabled: searchQuery.trim().length > 0,
-      keepPreviousData: true,
-      staleTime: 1000 * 60 * 5,
-    },
-  )
+  } = useQuery({
+    queryKey: ['movies', searchQuery, page],
+    queryFn: () => fetchMovies(searchQuery, page),
+    enabled: searchQuery.trim().length > 0,
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60 * 5,
+  })
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
