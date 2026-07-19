@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Toaster, toast } from 'react-hot-toast'
 import ReactPaginateModule from 'react-paginate'
 import type { ReactPaginateProps } from 'react-paginate'
 import type { ComponentType } from 'react'
@@ -27,6 +28,7 @@ const App = () => {
     data,
     isLoading,
     isError,
+    isSuccess,
   } = useQuery({
     queryKey: ['movies', searchQuery, page],
     queryFn: () => fetchMovies(searchQuery, page),
@@ -49,12 +51,28 @@ const App = () => {
     setSelectedMovie(null)
   }
 
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      return
+    }
+
+    if (isError) {
+      toast.error('Something went wrong. Please try again.')
+      return
+    }
+
+    if (isSuccess && movies.length === 0) {
+      toast.error('No movies found for your request.')
+    }
+  }, [isError, isSuccess, movies.length, searchQuery])
+
   const movies = data?.results ?? []
   const totalPages = data?.total_pages ?? 0
   const shouldShowPagination = totalPages > 1
 
   return (
     <div className={styles.app}>
+      <Toaster position="top-right" />
       <div className={styles.main}>
         <h1 className={styles.heading}>Movie Search</h1>
         <SearchBar onSubmit={handleSearch} />
